@@ -65,9 +65,6 @@ class DouBanMovieSpider(CrawlSpider):
                     url = url,
                     dont_filter = True,
                     method = 'GET',
-                    # meta = {
-                    #     'cookiejar': i
-                    # },
                     headers = self.headers,
                     callback = self.parse
             )
@@ -92,7 +89,6 @@ class DouBanMovieSpider(CrawlSpider):
 
                 r = Request(
                         url = link.url,
-                        # cookies = response.meta.get('cookiejar', ''),
                         headers = self.headers,
                         callback = self._response_downloaded
                 )
