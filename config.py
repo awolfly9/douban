@@ -9,3 +9,4 @@ database_config = {
 
 database_name = 'douban'
 douban_movie_table_name = 'movie'
+douban_book_table_name = 'book'

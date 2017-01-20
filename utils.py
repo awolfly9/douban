@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
 import logging
+import os
 import re
 import subprocess
 import traceback
@@ -48,37 +49,7 @@ def kill_ports(ports):
     time.sleep(1)
 
 
-def get_create_table_command(table_name):
-    command = (
-        "CREATE TABLE IF NOT EXISTS {} ("
-        "`id` INT(8) NOT NULL AUTO_INCREMENT UNIQUE ,"
-        "`title` TEXT NOT NULL,"
-        "`average` FLOAT NOT NULL,"
-        "`rating_people` INT(7) DEFAULT NULL,"
-        "`rating_five` CHAR(5) DEFAULT NULL,"
-        "`rating_four` CHAR(5) DEFAULT NULL ,"
-        "`info_director` CHAR(20) DEFAULT NULL,"
-        "`info_screenwriter` CHAR(20) DEFAULT NULL,"
-        "`info_starred` CHAR(20) DEFAULT NULL,"
-        "`info_type` CHAR(20) DEFAULT NULL,"
-        "`info_region` CHAR(20) DEFAULT NULL,"
-        "`info_language` CHAR(20) DEFAULT NULL,"
-        "`info_release_date` CHAR(40) DEFAULT NULL,"
-        "`info_runtime` CHAR(20) DEFAULT NULL,"
-        "`info_other_name` TEXT DEFAULT NULL,"
-        "`info_describe` TEXT DEFAULT NULL,"
-        "`url` TEXT NOT NULL,"
-        "`save_time` TIMESTAMP NOT NULL,"
-        "PRIMARY KEY(id)"
-        ") ENGINE=InnoDB".format(table_name))
-    return command
-
-
-def get_insert_data_command(table_name):
-    command = ("INSERT IGNORE INTO {} "
-               "(id, title, average, rating_people, rating_five, rating_four, info_director, info_screenwriter, "
-               "info_starred, info_type, info_region, info_language, info_release_date, info_runtime, "
-               "info_other_name, info_describe, url, save_time)"
-               "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(table_name))
-
-    return command
+def make_dir(dir):
+    log('make dir:%s' % dir)
+    if not os.path.exists(dir):
+        os.makedirs(dir)
