@@ -18,6 +18,6 @@ if __name__ == '__main__':
             level = logging.DEBUG,
     )
 
-    # cmdline.execute('scrapy crawl movie'.split())
-    cmdline.execute('scrapy crawl book'.split())
+    cmdline.execute('scrapy crawl movie'.split())
+    # cmdline.execute('scrapy crawl book'.split())
 
