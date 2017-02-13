@@ -55,7 +55,9 @@ ROBOTSTXT_OBEY = False
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     # 'douban.middlewares.MyCustomDownloaderMiddleware': 543,
+    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': None,
     'douban.middlewares.ProxyMiddleware': 100,
+    'douban.middlewares.CustomRetryMiddleware': 500,
 }
 
 # Enable or disable extensions
@@ -91,6 +93,9 @@ DOWNLOADER_MIDDLEWARES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
+DOWNLOAD_HANDLERS = {
+    's3': None,
+}
 
 USER_AGENTS = [
     'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)',

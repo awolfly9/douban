@@ -4,7 +4,7 @@ import json
 import logging
 import random
 
-from Singleton import Singleton
+from singleton import Singleton
 
 import mysql.connector
 from mysql.connector import errorcode
@@ -30,14 +30,6 @@ class SqlHelper(Singleton):
             self.cursor.execute('CREATE DATABASE IF NOT EXISTS %s DEFAULT CHARACTER SET \'utf8\' ' % self.database_name)
         except Exception, e:
             log('SqlHelper create_database exception:%s' % str(e), logging.WARNING)
-
-    def create_table(self, command):
-        try:
-            log('sql helper create command:%s' % command)
-            self.cursor.execute(command)
-            self.database.commit()
-        except Exception, e:
-            log('sql helper create_table exception:%s' % str(e), logging.WARNING)
 
     def insert_data(self, command, data):
         try:
@@ -80,3 +72,12 @@ class SqlHelper(Singleton):
         except Exception, e:
             log('sql helper execute exception msg:%s' % str(e))
             return None
+
+
+def create_table(cursor, database, command):
+    try:
+        log('sql helper create command:%s' % command)
+        cursor.execute(command)
+        database.commit()
+    except Exception, e:
+        log('sql helper create_table exception:%s' % str(e), logging.WARNING)

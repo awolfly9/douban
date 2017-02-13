@@ -3,6 +3,7 @@ import random
 import re
 import sys
 
+import requests
 from scrapy.http import HtmlResponse
 from scrapy.http import Request
 from scrapy.spiders import Rule
@@ -12,7 +13,7 @@ from scrapy.selector import Selector
 from bs4 import BeautifulSoup
 from utils import *
 from config import *
-from SqlHelper import SqlHelper
+from sqlhelper import SqlHelper, create_table
 from scrapy.utils.project import get_project_settings
 
 reload(sys)
@@ -24,9 +25,10 @@ class DouBanMovieSpider(CrawlSpider):
     handle_httpstatus_list = [403]
 
     start_urls = [
-        'https://movie.douban.com/subject/3434070/?from=subject-page',
+        'https://movie.douban.com/subject/22939161/?from=subject-page',
         'https://movie.douban.com/subject/4746257/?from=subject-page',
         'https://movie.douban.com/subject/26390631/?from=subject-page',
+        'https://movie.douban.com/subject/1297395/?from=subject-page',
     ]
 
     rules = [
@@ -49,10 +51,8 @@ class DouBanMovieSpider(CrawlSpider):
 
     def __init__(self, *a, **kw):
         super(DouBanMovieSpider, self).__init__(*a, **kw)
-        self.dir_movie = 'log/movie'
-        self.dir_log = 'log'
+        self.dir_movie = 'log/%s' % self.name
 
-        make_dir(self.dir_log)
         make_dir(self.dir_movie)
 
         self.sql = SqlHelper()
@@ -61,7 +61,7 @@ class DouBanMovieSpider(CrawlSpider):
 
     def init(self):
         command = self.get_create_table_command()
-        self.sql.create_table(command)
+        create_table(self.sql.cursor, self.sql.database, command)
 
     def start_requests(self):
         for i, url in enumerate(self.start_urls):
@@ -69,8 +69,12 @@ class DouBanMovieSpider(CrawlSpider):
                     url = url,
                     dont_filter = True,
                     method = 'GET',
+                    meta = {
+                        'download_timeout': 10,
+                    },
                     headers = self.headers,
-                    callback = self.parse
+                    callback = self.parse,
+                    errback = self.error_parse
             )
 
     def _requests_to_follow(self, response):
@@ -86,15 +90,19 @@ class DouBanMovieSpider(CrawlSpider):
                 seen.add(link)
                 self.headers['User-Agent'] = random.choice(get_project_settings().get('USER_AGENTS'))
 
-                id = self.get_id(link.url)
-                if self.exist_id(id):
-                    self.log('requests_to_follow exist id:%s' % id)
-                    continue
+                # id = self.get_id(link.url)
+                # if self.exist_id(id):
+                #     self.log('requests_to_follow exist id:%s' % id)
+                #     continue
 
                 r = Request(
                         url = link.url,
                         headers = self.headers,
-                        callback = self._response_downloaded
+                        meta = {
+                            'download_timeout': 10,
+                        },
+                        callback = self._response_downloaded,
+                        errback = self.error_parse
                 )
                 r.meta.update(rule = n, link_text = link.text)
                 yield rule.process_request(r)
@@ -192,6 +200,16 @@ class DouBanMovieSpider(CrawlSpider):
         command = self.get_insert_data_command()
 
         self.sql.insert_data(command, msg)
+
+    def error_parse(self, failure):
+        request = failure.request
+        self.log('error_request:%s' % request.meta.get('proxy'))
+        proxy = request.meta.get('proxy')
+        rets = proxy.split(':')
+        ip = rets[1]
+        ip = ip[2:]
+        requests.get('http://127.0.0.1:8000/delete?name=%s&ip=%s' % ('douban', ip))
+        pass
 
     def get_id(self, url):
         pattern = re.compile('/subject/(\d+)/', re.S)
