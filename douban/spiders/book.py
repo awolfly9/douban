@@ -3,6 +3,7 @@
 import random
 import re
 import sys
+import logging
 import requests
 import utils
 import config
@@ -70,7 +71,7 @@ class BookSpider(CrawlSpider):
 
         file_name = '%s/%s.html' % (self.dir_book, id)
 
-        self.write_file(file_name, response.body)
+        # self.write_file(file_name, response.body)
 
         text = response.body
 
@@ -82,7 +83,6 @@ class BookSpider(CrawlSpider):
         rating_people = sel.xpath('//a[@class="rating_people"]/span/text()').extract_first()
 
         rating_five = sel.xpath('//div[@class="rating_wrap clearbox"]/span[2]/text()').extract_first()
-
         rating_four = sel.xpath('//div[@class="rating_wrap clearbox"]/span[4]/text()').extract_first()
         info_author = sel.xpath('//div[@id="info"]/span/a/text()').extract_first()
 
@@ -146,7 +146,7 @@ class BookSpider(CrawlSpider):
 
     def error_parse(self, failure):
         request = failure.request
-        self.log('error_parse url:%s proxy:%s' % (request.url, str(request.meta)))
+        self.log('error_parse url:%s meta:%s' % (request.url, str(request.meta)), logging.ERROR)
 
     def get_id(self, url):
         pattern = re.compile('/subject/(\d+)/', re.S)

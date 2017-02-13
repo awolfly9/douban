@@ -82,7 +82,7 @@ class Bookurls(Spider):
                     meta = {
                         'tag': tag,
                         'download_timeout': 20,
-                        'is_proxy': False,
+                        # 'is_proxy': False,
                     },
                     callback = self.get_page,
                     errback = self.error_parse
@@ -118,7 +118,8 @@ class Bookurls(Spider):
             )
 
     def error_parse(self, failure):
-        utils.log('error_parse ', logging.ERROR)
+        request = failure.request
+        utils.log('error_parse url:%s meta:%s' % (request.url, str(request.meta)), logging.ERROR)
         pass
 
     def get_book_id(self, item):
