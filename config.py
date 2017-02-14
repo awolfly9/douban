@@ -8,6 +8,7 @@ database_config = {
 }
 
 database_name = 'douban'
-douban_movie_table_name = 'movie'
 douban_book = 'book'
 douban_book_urls = 'book_urls'
+douban_movie = 'movie'
+douban_movie_urls = 'movie_urls'

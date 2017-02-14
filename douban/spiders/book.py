@@ -22,12 +22,12 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
-class BookSpider(CrawlSpider):
+class Book(Spider):
     name = 'book'
 
     def __init__(self, *a, **kw):
-        super(BookSpider, self).__init__(*a, **kw)
-        self.dir_book = 'log/%s' % self.name
+        super(Book, self).__init__(*a, **kw)
+        self.log_dir = 'log/%s' % self.name
 
         self.sql = SqlHelper()
         self.headers = {
@@ -40,7 +40,7 @@ class BookSpider(CrawlSpider):
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:51.0) Gecko/20100101 Firefox/51.0',
         }
 
-        utils.make_dir(self.dir_book)
+        utils.make_dir(self.log_dir)
         self.init()
 
     def init(self):
@@ -69,7 +69,7 @@ class BookSpider(CrawlSpider):
 
         id = self.get_id(url)
 
-        file_name = '%s/%s.html' % (self.dir_book, id)
+        file_name = '%s/%s.html' % (self.log_dir, id)
 
         # self.write_file(file_name, response.body)
 

@@ -20,5 +20,6 @@ if __name__ == '__main__':
     )
 
     # cmdline.execute('scrapy crawl movie'.split())
-    cmdline.execute('scrapy crawl book'.split())
+    # cmdline.execute('scrapy crawl book'.split())
+    cmdline.execute('scrapy crawl movie_urls'.split())
 

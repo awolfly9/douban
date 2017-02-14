@@ -55,9 +55,9 @@ ROBOTSTXT_OBEY = False
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     # 'douban.middlewares.MyCustomDownloaderMiddleware': 543,
-    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': None,
-    'douban.middlewares.ProxyMiddleware': 100,
-    'douban.middlewares.CustomRetryMiddleware': 500,
+    # 'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': None,
+    # 'douban.middlewares.ProxyMiddleware': 100,
+    # 'douban.middlewares.CustomRetryMiddleware': 500,
 }
 
 # Enable or disable extensions

@@ -108,12 +108,15 @@ class ProxyManager(object):
         self.update_proxy()
 
     def update_proxy(self):
-        r = requests.get(url = 'http://127.0.0.1:8000/select?name=douban', timeout = 10)
-        data = json.loads(r.text)
-        for item in data:
-            self.proxys.append(item)
+        try:
+            r = requests.get(url = 'http://127.0.0.1:8000/select?name=douban', timeout = 10)
+            data = json.loads(r.text)
+            for item in data:
+                self.proxys.append(item)
 
-        logger.debug('*****************proxy manager  proxys:%s****************' % (str(self.proxys)))
+            logger.debug('*****************proxy manager  proxys:%s****************' % (str(self.proxys)))
+        except:
+            pass
 
     def get_proxy(self):
         if len(self.proxys) <= 0:
