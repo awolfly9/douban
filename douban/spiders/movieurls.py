@@ -84,12 +84,33 @@ class Movieurls(Spider):
                         'download_timeout': 20,
                         # 'is_proxy': False,
                     },
+                    callback = self.get_page_count,
+                    errback = self.error_parse
+            )
+
+    def get_page_count(self, response):
+        pages = response.xpath('//div[@class="paginator"]/a/text()').extract()
+        page_count = int(pages[len(pages) - 1])
+
+        tag = response.meta.get('tag')
+        for i in range(page_count):
+            url = 'https://movie.douban.com/tag/%s?start=%s&type=T' % (tag, i * 20)
+            yield Request(
+                    url = url,
+                    headers = self.headers,
+                    dont_filter = True,
+                    meta = {
+                        'tag': tag,
+                        'page': i + 1,
+                        'download_timeout': 20,
+                    },
                     callback = self.get_page,
                     errback = self.error_parse
             )
 
     def get_page(self, response):
-        self.write_file('%s/%s.html' % (self.log_dir, 'page'), response.body)
+        name = '%s_%s.html' % (response.meta.get('tag'), response.meta.get('page'))
+        self.write_file('%s/%s.html' % (self.log_dir, name), response.body)
 
         items = response.xpath('//div[@class=""]/table/tr/td[2]/div/a/@href').extract()
         for item in items:
@@ -101,21 +122,6 @@ class Movieurls(Spider):
             data = (id, item, response.meta.get('tag', ''), 'no')
 
             self.sql.insert_data(command, data)
-
-        next_url = response.xpath('//span[@class="next"]/a/@href').extract_first()
-        if next_url != None:
-            url = response.urljoin(next_url)
-            yield Request(
-                    url = url,
-                    headers = self.headers,
-                    dont_filter = True,
-                    meta = {
-                        'tag': response.meta.get('tag'),
-                        'download_timeout': 20,
-                    },
-                    callback = self.get_page,
-                    errback = self.error_parse
-            )
 
     def error_parse(self, failure):
         request = failure.request
