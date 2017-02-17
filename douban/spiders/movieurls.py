@@ -11,6 +11,7 @@ from scrapy.utils.project import get_project_settings
 from scrapy.spiders import Spider
 from scrapy.http import Request
 from scrapy.selector import Selector
+from proxymanager import proxymng
 
 
 class Movieurls(Spider):
@@ -60,7 +61,7 @@ class Movieurls(Spider):
                     headers = self.headers,
                     meta = {
                         'download_timeout': 20,
-                        'is_proxy': False,
+                        # 'is_proxy': False,
                     },
                     callback = self.get_all_category,
                     errback = self.error_parse,
@@ -109,8 +110,8 @@ class Movieurls(Spider):
             )
 
     def get_page(self, response):
-        name = '%s_%s.html' % (response.meta.get('tag'), response.meta.get('page'))
-        self.write_file('%s/%s.html' % (self.log_dir, name), response.body)
+        # filename = '%s_%s.html' % (response.meta.get('tag'), response.meta.get('page'))
+        # self.write_file('%s/%s.html' % (self.log_dir, filename), response.body)
 
         items = response.xpath('//div[@class=""]/table/tr/td[2]/div/a/@href').extract()
         for item in items:
@@ -125,8 +126,14 @@ class Movieurls(Spider):
 
     def error_parse(self, failure):
         request = failure.request
-        utils.log('error_parse url:%s meta:%s' % (request.url, str(request.meta)), logging.ERROR)
-        pass
+        utils.log('error_parse url:%s meta:%s' % (request.url, request.meta), logging.ERROR)
+
+        proxy = request.meta.get('proxy', None)
+        if proxy:
+            proxymng.delete_proxy(proxy)
+            request.meta['proxy'] = proxymng.get_proxy()
+
+        yield request
 
     def get_movie_id(self, item):
         res = item.split('/')

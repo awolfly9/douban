@@ -10,8 +10,8 @@ import datetime
 
 
 # 自定义的日志输出
-def log(msg, level = logging.DEBUG):
-    logging.log(level, msg)
+def log(msg, level = logging.DEBUG, *args, **kwargs):
+    logging.log(level, msg, *args, **kwargs)
     print('%s [%s], msg:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), level, msg))
 
     if level == logging.WARNING or level == logging.ERROR:

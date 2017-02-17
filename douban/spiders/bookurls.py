@@ -60,7 +60,7 @@ class Bookurls(Spider):
                     headers = self.headers,
                     meta = {
                         'download_timeout': 20,
-                        'is_proxy': False,
+                        # 'is_proxy': False,
                     },
                     callback = self.get_all_category,
                     errback = self.error_parse,
@@ -109,8 +109,8 @@ class Bookurls(Spider):
             )
 
     def get_page(self, response):
-        name = '%s_%s.html' % (response.meta.get('tag'), response.meta.get('page'))
-        self.write_file('%s/%s.html' % (self.log_dir, name), response.body)
+        # filename = '%s_%s.html' % (response.meta.get('tag'), response.meta.get('page'))
+        # self.write_file('%s/%s.html' % (self.log_dir, filename), response.body)
 
         items = response.xpath('//li[@class="subject-item"]/div/a/@href').extract()
         for item in items:

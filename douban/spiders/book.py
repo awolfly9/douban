@@ -15,7 +15,7 @@ from scrapy.spiders import Spider, CrawlSpider
 from scrapy.linkextractors.sgml import SgmlLinkExtractor as sle
 from scrapy.selector import Selector
 from bs4 import BeautifulSoup
-from sqlhelper import SqlHelper, create_table
+from sqlhelper import SqlHelper
 from scrapy.utils.project import get_project_settings
 
 reload(sys)
